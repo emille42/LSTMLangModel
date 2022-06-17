@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+ <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/styles.css') }}" />
+</head>
+
+<body>
+<script>
+function sendQuery(e)
+{   e.preventDefault();
+    let form= document.getElementById("queryForm");
+    let formData = new FormData(form);
+
+    //var object = {};
+    //formData.forEach(function(value, key){
+    //    object[key] = value;
+    //});
+    //var json = JSON.stringify(object);
+
+    let text= e.target.value;
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+    if ( this.readyState == 4 && this.status == 200) {
+        myFunc(this.responseText)
+        }
+    }
+    if (text.trim().length > 0 ) {
+        xhttp.open("POST", "/search", true);
+        //xhttp.setRequestHeader(name= 'Content-Type', value= 'application/x-www-form-urlencoded');
+
+        xhttp.send(formData);
+    } else if (text.trim().length == 0) {
+        document.getElementById("list").innerHTML = "";
+        document.getElementById("response").style.display = "none";
+    }
+
+}
+
+function myFunc(data) {
+   result  = JSON.parse(JSON.parse(data));
+   document.getElementById("list").innerHTML = "";
+
+   var ul = document.getElementById("list");
+   for(var k in result) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(result[k]));
+    ul.appendChild(li);
+    li.className = "response_li";
+}
+    document.getElementById("response").style.display = "block";
+}
+</script>
+<div class="formContainer">
+      <form   enctype="multipart/form-data" id="queryForm">
+        <input type="text" maxlength="28" name="text", id="query_in" oninput="sendQuery(event);"/>
+        <input type="button" value="Search" id="searchBtn" />
+        </form>
+<div id="response"> <ul id="list">
+
+</ul></div>
+
+</div>
+
+</body>
+
+</html>
